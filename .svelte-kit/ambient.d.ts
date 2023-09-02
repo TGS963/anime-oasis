@@ -43,6 +43,7 @@ declare module '$env/static/private' {
 	export const DESKTOP_SESSION: string;
 	export const TERM_PROGRAM_VERSION: string;
 	export const npm_package_json: string;
+	export const GIO_LAUNCHED_DESKTOP_FILE: string;
 	export const LSCOLORS: string;
 	export const ZSH: string;
 	export const GNOME_SHELL_SESSION_MODE: string;
@@ -58,6 +59,7 @@ declare module '$env/static/private' {
 	export const npm_config_engine_strict: string;
 	export const npm_config_resolution_mode: string;
 	export const COLORTERM: string;
+	export const GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 	export const COLOR: string;
 	export const VOLTA_HOME: string;
 	export const _VOLTA_TOOL_RECURSION: string;
@@ -82,14 +84,12 @@ declare module '$env/static/private' {
 	export const NODE: string;
 	export const npm_package_name: string;
 	export const GDK_BACKEND: string;
-	export const GNOME_TERMINAL_SCREEN: string;
 	export const XDG_MENU_PREFIX: string;
 	export const XDG_RUNTIME_DIR: string;
 	export const DISPLAY: string;
 	export const LANG: string;
 	export const VSCODE_INJECTION: string;
 	export const XDG_CURRENT_DESKTOP: string;
-	export const GNOME_TERMINAL_SERVICE: string;
 	export const LS_COLORS: string;
 	export const TERM_PROGRAM: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
@@ -120,7 +120,6 @@ declare module '$env/static/private' {
 	export const _P9K_TTY: string;
 	export const npm_config_global_prefix: string;
 	export const npm_command: string;
-	export const VTE_VERSION: string;
 	export const INIT_CWD: string;
 	export const EDITOR: string;
 	export const NODE_ENV: string;
@@ -170,6 +169,7 @@ declare module '$env/dynamic/private' {
 		DESKTOP_SESSION: string;
 		TERM_PROGRAM_VERSION: string;
 		npm_package_json: string;
+		GIO_LAUNCHED_DESKTOP_FILE: string;
 		LSCOLORS: string;
 		ZSH: string;
 		GNOME_SHELL_SESSION_MODE: string;
@@ -185,6 +185,7 @@ declare module '$env/dynamic/private' {
 		npm_config_engine_strict: string;
 		npm_config_resolution_mode: string;
 		COLORTERM: string;
+		GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 		COLOR: string;
 		VOLTA_HOME: string;
 		_VOLTA_TOOL_RECURSION: string;
@@ -209,14 +210,12 @@ declare module '$env/dynamic/private' {
 		NODE: string;
 		npm_package_name: string;
 		GDK_BACKEND: string;
-		GNOME_TERMINAL_SCREEN: string;
 		XDG_MENU_PREFIX: string;
 		XDG_RUNTIME_DIR: string;
 		DISPLAY: string;
 		LANG: string;
 		VSCODE_INJECTION: string;
 		XDG_CURRENT_DESKTOP: string;
-		GNOME_TERMINAL_SERVICE: string;
 		LS_COLORS: string;
 		TERM_PROGRAM: string;
 		VSCODE_GIT_IPC_HANDLE: string;
@@ -247,7 +246,6 @@ declare module '$env/dynamic/private' {
 		_P9K_TTY: string;
 		npm_config_global_prefix: string;
 		npm_command: string;
-		VTE_VERSION: string;
 		INIT_CWD: string;
 		EDITOR: string;
 		NODE_ENV: string;
