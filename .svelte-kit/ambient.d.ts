@@ -26,6 +26,10 @@
  * ```
  */
 declare module '$env/static/private' {
+	export const GOOGLE_PHOTOS_CLIENT_ID: string;
+	export const GOOGLE_PHOTOS_CLIENT_SECRET: string;
+	export const OAUTH_CLIENT_ID: string;
+	export const OAUTH_CLIENT_SECRET: string;
 	export const GJS_DEBUG_TOPICS: string;
 	export const LANGUAGE: string;
 	export const USER: string;
@@ -152,6 +156,10 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
+		GOOGLE_PHOTOS_CLIENT_ID: string;
+		GOOGLE_PHOTOS_CLIENT_SECRET: string;
+		OAUTH_CLIENT_ID: string;
+		OAUTH_CLIENT_SECRET: string;
 		GJS_DEBUG_TOPICS: string;
 		LANGUAGE: string;
 		USER: string;

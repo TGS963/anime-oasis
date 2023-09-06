@@ -1,3 +1,9 @@
 {
-	"/": []
+	"/": [],
+	"/auth/google/callback": [
+		"src/routes/auth/google/callback/+server.ts"
+	],
+	"/signup": [
+		"src/routes/signup/+page.server.ts"
+	]
 }
