@@ -1,9 +1,13 @@
 {
 	"/": [],
-	"/auth/google/callback": [
-		"src/routes/auth/google/callback/+server.ts"
+	"/db-upload": [
+		"src/routes/db-upload/+server.ts"
 	],
-	"/signup": [
-		"src/routes/signup/+page.server.ts"
+	"/rename": [
+		"src/routes/rename/+server.ts"
+	],
+	"/upload-image": [],
+	"/upload": [
+		"src/routes/upload/+server.ts"
 	]
 }
