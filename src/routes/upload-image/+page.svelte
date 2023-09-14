@@ -1,4 +1,6 @@
 <script lang="ts">
+	import type { dbType } from '$lib/types';
+
 	let loading = false;
 	let selectedFile: File | null = null;
 	let uploadedImageURL: string = '';
@@ -6,12 +8,14 @@
 	let animeName: string = '';
 	let tags: string[] = [];
 	let tagInput: string = '';
+	let productType: 'card' | 'poster' = 'card';
 
 	$: uploadedImageURL;
 	$: fileName;
 	$: animeName;
 	$: tags;
 	$: tagInput;
+	$: productType;
 
 	function handleFileChange(
 		event: Event & {
@@ -58,14 +62,16 @@
 						method: 'POST',
 						body
 					});
+					const newProduct: dbType = {
+						filename: fileName,
+						tags: tags,
+						anime: animeName,
+						url: `https://drive.google.com/uc?export=view&id=${uploadedImageURL}`,
+						type: productType
+					};
 					await fetch('/db-upload', {
 						method: 'POST',
-						body: JSON.stringify({
-							filename: fileName,
-							tags: tags,
-							anime: animeName,
-							url: `https://drive.google.com/uc?export=view&id=${uploadedImageURL}`
-						})
+						body: JSON.stringify(newProduct)
 					});
 					resolve(link);
 				} catch (err) {
@@ -102,6 +108,10 @@
 			{tag}
 		</button>
 	{/each}
+	<select bind:value={productType}>
+		<option selected value="card">Card</option>
+		<option value="poster">Poster</option>
+	</select>
 
 	<button class="border border-blue-300" disabled={fileName === ''} on:click={handleSubmit}
 		>Upload Image</button

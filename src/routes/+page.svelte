@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
 	import ItemCard from '$lib/components/ItemCard.svelte';
-	let data = {
-		title: 'ABC-1',
-		image: 'https://drive.google.com/uc?export=view&id=1VKR4qe0BPUQRt0-tPAjrO1SDqvl_GySk',
-		price: 99
-	};
+	import type { dbType } from '$lib/types';
+	import { onMount } from 'svelte';
+	let dbData: dbType[] = [];
+	onMount(async () => {
+		const res = await fetch('/db-get');
+		dbData = await res.json();
+	});
 </script>
 
 <svelte:head>
@@ -14,7 +16,9 @@
 
 <section>
 	<h1>Anime Oasis Placeholder</h1>
-	<div class="w-1/5">
-		<ItemCard {...data} />
-	</div>
+	{#each dbData as dbDoc}
+		<div class="w-1/5">
+			<ItemCard image={dbDoc?.url} type={dbDoc?.type} title={dbDoc?.filename} />
+		</div>
+	{/each}
 </section>

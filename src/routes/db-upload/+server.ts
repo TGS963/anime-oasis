@@ -1,8 +1,9 @@
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../firebase';
+import type { dbType } from '$lib/types';
 
 export async function POST({ request }) {
-	const body = await request.json();
+	const body: dbType = await request.json();
 	console.log(body);
 	const collectionRef = collection(db, 'mockup');
 

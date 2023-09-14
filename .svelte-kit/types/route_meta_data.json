@@ -1,5 +1,8 @@
 {
 	"/": [],
+	"/db-get": [
+		"src/routes/db-get/+server.ts"
+	],
 	"/db-upload": [
 		"src/routes/db-upload/+server.ts"
 	],
