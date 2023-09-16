@@ -9,9 +9,8 @@ export const dbTypeConverter = {
 		const data = snapshot.data();
 		return {
 			anime: data.anime,
-			filename: data.filename,
-			url: data.url,
-			type: data.type,
+			card: data.card,
+			poster: data.poster,
 			tags: data.tags
 		} as dbType;
 	}

@@ -2,35 +2,54 @@
 	import type { dbType } from '$lib/types';
 
 	let loading = false;
-	let selectedFile: File | null = null;
-	let uploadedImageURL: string = '';
-	let fileName: string = '';
+	let cardFile: File | null = null;
+	let posterFile: File | null = null;
+	let cardName: string = '';
+	let posterName: string = '';
 	let animeName: string = '';
 	let tags: string[] = [];
 	let tagInput: string = '';
-	let productType: 'card' | 'poster' = 'card';
 
-	$: uploadedImageURL;
-	$: fileName;
+	$: uploadedCardURL = '';
+	$: uploadedPosterURL = '';
+	$: cardFile;
+	$: posterFile;
+	$: cardName;
+	$: posterName;
 	$: animeName;
 	$: tags;
 	$: tagInput;
-	$: productType;
 
-	function handleFileChange(
+	function handleCardFileChange(
 		event: Event & {
 			currentTarget: EventTarget & HTMLInputElement;
 		}
 	) {
 		const inputElement = event.target as HTMLInputElement;
 		if (inputElement.files && inputElement.files[0]) {
-			selectedFile = inputElement.files[0];
-			fileName = selectedFile?.name ?? 'No file chosen';
+			cardFile = inputElement.files[0];
+			cardName = cardFile?.name ?? 'No file chosen';
 		}
 	}
 
-	function handleFileNameChange(e: Event) {
-		fileName = (e.target as HTMLInputElement).value;
+	function handlePosterFileChange(
+		event: Event & {
+			currentTarget: EventTarget & HTMLInputElement;
+		}
+	) {
+		const inputElement = event.target as HTMLInputElement;
+		if (inputElement.files && inputElement.files[0]) {
+			posterFile = inputElement.files[0];
+			posterName = posterFile?.name ?? 'No file chosen';
+		}
+	}
+
+	function handleCardFileNameChange(e: Event) {
+		cardName = (e.target as HTMLInputElement).value;
+	}
+
+	function handlePosterFileNameChange(e: Event) {
+		posterName = (e.target as HTMLInputElement).value;
 	}
 
 	function handleAnimeNameChange(e: Event) {
@@ -46,79 +65,154 @@
 
 	const handleSubmit = async () => {
 		loading = true;
-		const promise = new Promise(async (resolve, reject) => {
-			const reader = new FileReader();
-			reader.onloadend = async () => {
-				console.log(reader.result);
-				try {
-					const response = await fetch('/upload', {
-						method: 'POST',
-						body: reader.result
-					});
-					const link = await response.json();
-					uploadedImageURL = link.fileId;
-					const body = JSON.stringify({ name: fileName, fileId: uploadedImageURL });
-					await fetch('/rename', {
-						method: 'POST',
-						body
-					});
-					const newProduct: dbType = {
-						filename: fileName,
-						tags: tags,
-						anime: animeName,
-						url: `https://drive.google.com/uc?export=view&id=${uploadedImageURL}`,
-						type: productType
-					};
-					await fetch('/db-upload', {
-						method: 'POST',
-						body: JSON.stringify(newProduct)
-					});
-					resolve(link);
-				} catch (err) {
-					reject(err);
-				}
-			};
-			reader.onerror = (error) => reject(error);
-			reader.readAsDataURL(selectedFile!);
+		const promises = [
+			{
+				file: cardFile,
+				name: cardName,
+				type: 'card'
+			},
+			{
+				file: posterFile,
+				name: posterName,
+				type: 'poster'
+			}
+		].map(async ({ file, name, type }) => {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onloadend = async () => {
+					console.log(reader.result);
+					try {
+						const response = await fetch('/upload', {
+							method: 'POST',
+							body: reader.result
+						});
+						const link = await response.json();
+						if (type === 'card') {
+							uploadedCardURL = link.fileId;
+						} else {
+							uploadedPosterURL = link.fileId;
+						}
+						const body = JSON.stringify({ name, fileId: link.fileId });
+						await fetch('/rename', {
+							method: 'POST',
+							body
+						});
+
+						resolve(link);
+					} catch (err) {
+						reject(err);
+					}
+				};
+				reader.onerror = (error) => reject(error);
+				reader.readAsDataURL(file!);
+			});
 		});
 
 		try {
-			await Promise.all([promise]);
+			await Promise.all(promises);
 		} catch (err) {
 			console.log('err', err);
 		} finally {
+			const newProduct: dbType = {
+				card: {
+					name: cardName,
+					url: `https://drive.google.com/uc?export=view&id=${uploadedCardURL}`
+				},
+				poster: {
+					name: posterName,
+					url: `https://drive.google.com/uc?export=view&id=${uploadedPosterURL}`
+				},
+				tags: tags,
+				anime: animeName
+			};
+			await fetch('/db-upload', {
+				method: 'POST',
+				body: JSON.stringify(newProduct)
+			});
 			loading = false;
 		}
 	};
 	console.log(tags);
 </script>
 
-<div>
-	<input type="file" accept="image/*" on:change={handleFileChange} />
-	<input bind:value={fileName} class="border" on:change={handleFileNameChange} />
-	<input class="border" on:change={handleAnimeNameChange} />
-	<input class="border" bind:value={tagInput} on:keydown={handleTagKeydown} />
-	{#each tags as tag}
+<div class="flex flex-col gap-4 items-center justify-center bg-black rounded-xl p-5 w-fit">
+	<h1 class="text-3xl text-cyan-400">Upload New Mocks</h1>
+	<section class="flex flex-col gap-4">
+		<section class="flex flex-row">
+			<section class="flex flex-col">
+				<label for="card-file-input">Card Image</label>
+				<input id="card-file-input" type="file" accept="image/*" on:change={handleCardFileChange} />
+			</section>
+			<section class="flex flex-col">
+				<label for="poster-file-input">Poster Image</label>
+				<input
+					id="poster-file-input"
+					type="file"
+					accept="image/*"
+					on:change={handlePosterFileChange}
+				/>
+			</section>
+		</section>
+
+		<label for="card-name-input">Card Inferred Name</label>
+		<input
+			id="card-name-input"
+			bind:value={cardName}
+			class="border"
+			on:change={handleCardFileNameChange}
+		/>
+
+		<label for="poster-name-input">Poster Inferred Name</label>
+		<input
+			id="poster-name-input"
+			bind:value={posterName}
+			class="border"
+			on:change={handlePosterFileNameChange}
+		/>
+
+		<label for="anime-name-input">Anime Name</label>
+		<input id="anime-name-input" class="border" on:change={handleAnimeNameChange} />
+
+		<label for="tag-input">Tags</label>
+		<input id="tag-input" class="border" bind:value={tagInput} on:keydown={handleTagKeydown} />
+		<section class="flex flex-row gap-2">
+			{#each tags as tag}
+				<button
+					on:click={() => {
+						tags = tags.filter((t) => t !== tag);
+					}}
+					class="border border-slate-300 bg-slate-600 rounded-md px-2 py-1 hover:bg-red-500 hover:text-white"
+				>
+					{tag}
+				</button>
+			{/each}
+		</section>
+
 		<button
-			on:click={() => {
-				tags = tags.filter((t) => t !== tag);
-			}}
-			class="border border-blue-300"
+			class="border border-gray-300 rounded-md enabled:hover:bg-slate-500 disabled:text-gray-500 disabled:bg-gray-800"
+			disabled={cardName === '' || posterName === ''}
+			on:click={handleSubmit}>Upload Image</button
 		>
-			{tag}
-		</button>
-	{/each}
-	<select bind:value={productType}>
-		<option selected value="card">Card</option>
-		<option value="poster">Poster</option>
-	</select>
+	</section>
 
-	<button class="border border-blue-300" disabled={fileName === ''} on:click={handleSubmit}
-		>Upload Image</button
+	<section
+		class={`${
+			uploadedCardURL !== '' && uploadedPosterURL !== '' ? 'block' : 'hidden'
+		} flex flex-row`}
 	>
-</div>
-
-<div>
-	<h2>Uploaded Image:</h2>
-	<img src={`https://drive.google.com/uc?export=view&id=${uploadedImageURL}`} alt="Uploaded" />
+		<h2>Uploaded Card Image:</h2>
+		<img
+			width="200"
+			height="200"
+			src={`https://drive.google.com/uc?export=view&id=${uploadedCardURL}`}
+			alt="Uploaded Card"
+		/>
+		<h2>Uploaded Poster Image:</h2>
+		<img
+			width="200"
+			height="200"
+			src={`https://drive.google.com/uc?export=view&id=${uploadedPosterURL}`}
+			alt="Uploaded Poster"
+		/>
+	</section>
 </div>

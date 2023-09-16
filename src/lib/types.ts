@@ -1,7 +1,12 @@
 export type dbType = {
 	anime: string;
-	filename: string;
-	url: string;
-	type: 'card' | 'poster';
+	card: {
+		name: string;
+		url: string;
+	};
+	poster: {
+		name: string;
+		url: string;
+	};
 	tags: string[];
 };

@@ -17,8 +17,8 @@
 <section>
 	<h1>Anime Oasis Placeholder</h1>
 	{#each dbData as dbDoc}
-		<div class="w-1/5">
-			<ItemCard image={dbDoc?.url} type={dbDoc?.type} title={dbDoc?.filename} />
+		<div class="">
+			<ItemCard images={[dbDoc?.poster.url, dbDoc.card.url]} title={dbDoc?.poster.name} />
 		</div>
 	{/each}
 </section>
